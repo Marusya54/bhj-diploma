@@ -10,16 +10,23 @@ class Sidebar {
   static init() {
     this.initAuthLinks();
     this.initToggleButton();
-  }
+  };
 
   /**
    * Отвечает за скрытие/показа боковой колонки:
    * переключает два класса для body: sidebar-open и sidebar-collapse
    * при нажатии на кнопку .sidebar-toggle
    * */
-  static initToggleButton() {
+ static initToggleButton() {
+    const body = document.querySelector('body');
 
-  }
+    document.querySelector('.sidebar-toggle').onclick = e => {
+      e.preventDefault();
+      ['sidebar-open', 'sidebar-collapse'].forEach(cls => {
+        body.classList.toggle(cls);
+      });
+    };
+  };
 
   /**
    * При нажатии на кнопку входа, показывает окно входа
@@ -29,6 +36,20 @@ class Sidebar {
    * выходу устанавливает App.setState( 'init' )
    * */
   static initAuthLinks() {
+    document.querySelector('.menu-item_logout').onclick = e => {
+      e.preventDefault();
+      User.logout((err, response) => {
+        if (response && response.success) {
+          App.setState('init');
+        }
+      });
+    }
+    ['login', 'register'].forEach(action => {
 
-  }
-}
+    document.querySelector(`.menu-item_${action}`).onclick = e => {
+      e.preventDefault();
+      App.getModal(action).open();
+    } 
+  });  
+  };
+};

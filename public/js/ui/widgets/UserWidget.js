@@ -12,8 +12,8 @@ class UserWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor(element){
-
-  }
+    this.element = element;
+  };
 
   /**
    * Получает информацию о текущем пользователе
@@ -23,6 +23,9 @@ class UserWidget {
    * авторизованного пользователя
    * */
   update(){
-
-  }
+    const user = User.current();
+      if (user) {
+      document.querySelector('.user-name').textContent = user.name;
 }
+  };
+};

@@ -95,7 +95,7 @@ class App {
    * из него свойство modalName:
    * App.getModal( 'login' ); // извелекает App.modals.login
    * */
-  static getModal(modalName) {
+ static getModal(modalName) {
     return this.modals[modalName];
   }
 
@@ -208,3 +208,4 @@ class App {
     this.getForm("createExpense").renderAccountsList();
   }
 }
+   
