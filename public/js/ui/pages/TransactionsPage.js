@@ -1,7 +1,3 @@
-//const { response } = require("express");
-
-//const { application } = require("express");
-
 /**
  * Класс TransactionsPage управляет
  * страницей отображения доходов и
@@ -42,7 +38,7 @@ class TransactionsPage {
       const button = e.target.closest('button.tansaction_remove');
 
       if (button) {
-        this.getTransaction(button.dataset.id);
+        this.removeTransaction(button.dataset.id);
       }
     };
   };
@@ -60,13 +56,15 @@ class TransactionsPage {
     if (this.lastOptions === undefined) {
       return;
     };
-
-    Account.remove(this.lastOptions, (err, response) => {
+    if(confirm('Вы действительно хотите удалить счёт?')) {
+    Account.remove({id: this.lastOptions.account_id}, (err, response) => {
       if (response && response.success) {
         App.updateWidgets();
         App.updateForms();
+        this.clear();
       }
     });
+  }
   };
 
   /**
@@ -76,9 +74,18 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction(id) {
-
+    if (this.lastOptions === undefined) {
+      return;
+    };
+    if(confirm('Вы хотите удалить транзакцию?')) {
+      Transaction.remove({id: this.lastOptions.data-id}, (err, response) => {
+        if(response && response.success) {
+          App.update();
+          this.clear();
+        }
+      });
+    };
   }
-
   /**
    * С помощью Account.get() получает название счёта и отображает
    * его через TransactionsPage.renderTitle.
@@ -129,7 +136,17 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date) {
-
+    let nowDate = new Date(date);
+    let day = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    let time = {
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    return `${nowDate.toLocaleString("ru", day)}  в ${nowDate.toLocaleString("ru", time)}`
   }
 
   /**
@@ -146,7 +163,7 @@ class TransactionsPage {
         <div class="transaction__info">
         <h4 class="transaction__title">${item.name}</h4>
         <!-- дата -->
-        <div class="transaction__date">${item.created.at}</div>
+        <div class="transaction__date">${item.created_at}</div>
        </div>
         </div>
        <div class="col-md-3">

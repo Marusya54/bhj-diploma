@@ -1,5 +1,3 @@
-//const { application } = require("express");
-
 /**
  * Класс CreateTransactionForm управляет формой
  * создания новой транзакции
@@ -20,18 +18,25 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-    const list = this.element.querySelector('select');
-    list.querySelectorAll('option').forEach(e => e.remove());
-
-    Account.list(null, (err, response) => {
-      if (response) {
-        response.data.forEach(i => list.insertAdjacentHTML(
-          `beforeend`,
-          `<option value="${i.id}">${i.name}</option>`
-        ));
-      }
-    });
+    Account.list(null, (err, response) => { 
+      if (response && response.success) { 
+        if (this.element.id === 'new-income-form') { 
+          let select = this.element.querySelector('.accounts-select');
+          select.innerHTML = response.data.reduce((newArr, currentValue) => {
+          newArr.push(`<option value="${currentValue.id}">${currentValue.name}</option>`);
+          return newArr;
+    }, []);
   }
+      if (this.element.id === 'new-expense-form') { 
+        let select = this.element.querySelector('.accounts-select');
+        select.innerHTML = response.data.reduce((newArr, currentValue) => {
+        newArr.push(`<option value="${currentValue.id}">${currentValue.name}</option>`);
+        return newArr;
+    }, []);
+  }
+}
+    });
+};
 
   /**
    * Создаёт новую транзакцию (доход или расход)
@@ -43,10 +48,10 @@ class CreateTransactionForm extends AsyncForm {
     Transaction.create(data, (err , response) => {
       if (response && response.success) {
         this.element.reset();
-
-        new Modal(this.element.closest('.modal')).close();
+        App.getModal('new' + type[0].toUpperCase() + type.slice(1)).close();
+        //new Modal(this.element.closest('.modal')).close();
         App.update();
       }
     });
-  }
-}
+  };
+};
