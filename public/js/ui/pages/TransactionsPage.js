@@ -35,7 +35,7 @@ class TransactionsPage {
 
     this.element.querySelector('section.content').onclick = e => {
       e.preventDefault();
-      const button = e.target.closest('button.tansaction_remove');
+      const button = e.target.closest('.transaction__remove');
 
       if (button) {
         this.removeTransaction(button.dataset.id);
@@ -74,11 +74,11 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction(id) {
-    if (this.lastOptions === undefined) {
+   if (this.lastOptions === undefined) {
       return;
     };
     if(confirm('Вы хотите удалить транзакцию?')) {
-      Transaction.remove({id: this.lastOptions.data-id}, (err, response) => {
+        Transaction.remove({ id }, (err, response) => {
         if(response && response.success) {
           App.update();
           this.clear();

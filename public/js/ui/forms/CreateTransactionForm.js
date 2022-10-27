@@ -18,25 +18,16 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-    Account.list(null, (err, response) => { 
-      if (response && response.success) { 
-        if (this.element.id === 'new-income-form') { 
-          let select = this.element.querySelector('.accounts-select');
-          select.innerHTML = response.data.reduce((newArr, currentValue) => {
-          newArr.push(`<option value="${currentValue.id}">${currentValue.name}</option>`);
-          return newArr;
-    }, []);
-  }
-      if (this.element.id === 'new-expense-form') { 
-        let select = this.element.querySelector('.accounts-select');
-        select.innerHTML = response.data.reduce((newArr, currentValue) => {
-        newArr.push(`<option value="${currentValue.id}">${currentValue.name}</option>`);
-        return newArr;
-    }, []);
-  }
-}
+    const accountsList = this.element.getElementsByTagName('select')[0];
+    accountsList.innerHTML = '';
+
+    Account.list(User.fetch((err,response) => response.user), (err, response) => {
+      if(response.success) {
+        response.data.forEach(acc => accountsList.insertAdjacentHTML('beforeend', 
+        `<option value="${acc.id}">${acc.name}</option>`))
+      }
     });
-};
+}
 
   /**
    * Создаёт новую транзакцию (доход или расход)
@@ -45,13 +36,22 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
-    Transaction.create(data, (err , response) => {
+    Transaction.create(data, (err, response) => {
+      if(response && response.success) {
+        this.element.reset();
+        if(data.type == 'income') {
+          App.getModal('newIncome').close();
+        } else App.getModal('newExpense').close();
+        App.update();
+      } 
+    });
+  }
+    /*Transaction.create(data, (err , response) => {
       if (response && response.success) {
         this.element.reset();
         App.getModal('new' + type[0].toUpperCase() + type.slice(1)).close();
-        //new Modal(this.element.closest('.modal')).close();
         App.update();
       }
     });
-  };
+  };*/
 };

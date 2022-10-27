@@ -27,20 +27,14 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() { 
-    this.element.querySelector('.create-account').onclick = e => {
-      e.preventDefault();
-      App.getModal('createAccount').open();
-    };
-
-    this.element.onclick = e => {
-      if (e.target.classList.contains('header')){
-        return;
+    this.element.onclick = (e) => {
+      if(e.target.closest('.create-account')) {
+        App.getModal('createAccount').open();
+    } else {
+        this.onSelectAccount(e.target.closest('li'));
+ }
   };
-
-    e.preventDefault();
-    this.onSelectAccount(e.target.closest('li'));
-};
-  };
+}
 
   /**
    * Метод доступен только авторизованным пользователям
@@ -87,7 +81,6 @@ class AccountsWidget {
     if (this.prevActiveElement) {
       this.prevActiveElement.classList.remove('active');
 };
-
    element.classList.add('active');
    this.prevActiveElement = element;
    App.showPage('transactions', { account_id: element.dataset.id });

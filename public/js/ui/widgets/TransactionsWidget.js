@@ -27,5 +27,8 @@ class TransactionsWidget {
     this.element.querySelector('.create-income-button').onclick = e => {
       App.getModal('newIncome').open();
     };
+    this.element.querySelector('.create-expense-button').onclick = e => {
+      App.getModal('newExpense').open();
+    };
   }
 }
